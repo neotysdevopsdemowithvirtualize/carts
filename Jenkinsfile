@@ -26,13 +26,13 @@ pipeline {
         stage('Checkout') {
             agent { label 'master' }
             steps {
-                checkout scm
+                git  url:'https://github.com/neotysdevopdemo/carts.git',
+                        branch :'master'
             }
         }
         stage('Maven build') {
             agent { label 'master' }
             steps {
-
                 sh "mvn -B clean package -DdynatraceId=$DYNATRACEID -DneoLoadWebAPIKey=$NLAPIKEY -DdynatraceApiKey=$DYNATRACEAPIKEY -Dtags=${NL_DT_TAG} -DoutPutReferenceFile=$OUTPUTSANITYCHECK -DcustomActionPath=$DYNATRACEPLUGINPATH -DjsonAnomalieDetectionFile=$CARTS_ANOMALIEFILE"
                 // cette ligne est pour license ...mais il me semble que tu as license avec ton container  sh "chmod -R 777 $WORKSPACE/target/neoload/"
             }
