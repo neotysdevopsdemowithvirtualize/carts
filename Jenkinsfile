@@ -21,6 +21,8 @@ pipeline {
         GROUP = "neotysdevopsdemo"
         COMMIT = "DEV - ${ env.BUILD_NUMBER}"
 
+
+
     }
     stages {
         stage('Checkout') {
@@ -47,7 +49,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
                     sh "cp ./target/*.jar ./docker/carts"
-                    sh "./scripts/build.sh GROUP=${GROUP} COMMIT=${COMMIT}"
+                    sh "docker build --build-arg BUILD_VERSION=${env.VERSION} E --build-arg COMMIT=$COMMIT -t ${GROUP}/carts:${TAG_DEV}"
                     sh "docker login --username=${USER} --password=${TOKEN}"
                     sh "docker push ${TAG_DEV}"
                 }
@@ -218,6 +220,7 @@ pipeline {
 
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
                     sh "docker login --username=${USER} --password=${TOKEN}"
+
                     sh "GROUP=${GROUP} COMMIT=${TAG_STAGING} ./scripts/push.sh"
                     sh "docker tag $TAG_DEV} ${TAG_STAGING}"
                     sh "docker push ${TAG_STAGING}"
