@@ -218,29 +218,29 @@ pipeline {
 
             }
         }
-
-        post {
-            always {
-                stage('Stop Infrastructure') {
-                    parallel {
-                        stage('Stop NeoLoad infrastructure') {
-                            agent { label 'master' }
-                            steps {
-                                sh 'docker-compose -f neoload/lg/docker-compose.yml down'
-                            }
+    }
+    post {
+        always {
+            stage('Stop Infrastructure') {
+                parallel {
+                    stage('Stop NeoLoad infrastructure') {
+                        agent { label 'master' }
+                        steps {
+                            sh 'docker-compose -f neoload/lg/docker-compose.yml down'
                         }
-                        stage('Stop application') {
-                            agent { label 'master' }
-                            steps {
+                    }
+                    stage('Stop application') {
+                        agent { label 'master' }
+                        steps {
 
-                                sh 'docker-compose -f docker-compose.yml down'
-                            }
+                            sh 'docker-compose -f docker-compose.yml down'
                         }
                     }
                 }
             }
-
         }
+
     }
+
 }
 
