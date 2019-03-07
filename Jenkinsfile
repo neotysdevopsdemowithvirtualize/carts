@@ -18,7 +18,7 @@ pipeline {
         OUTPUTSANITYCHECK = "$WORKSPACE/infrastructure/sanitycheck.json"
         DYNATRACEPLUGINPATH = "$WORKSPACE/lib/DynatraceIntegration-3.0.1-SNAPSHOT.jar"
         GITORIGIN = "neotyslab"
-        GROUP = "neotysdevopdemo"
+        GROUP = "neotysdevopsdemo"
         COMMIT = "DEV - ${ env.BUILD_NUMBER}"
 
     }
@@ -46,6 +46,7 @@ pipeline {
             agent { label 'master' }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
+                    sh "cp ./target/*.jar ./docker/carts"
                     sh "./scripts/build.sh GROUP=${GROUP} COMMIT=${COMMIT}"
                     sh "docker login --username=${USER} --password=${TOKEN}"
                     sh "docker push ${TAG_DEV}"
