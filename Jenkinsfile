@@ -123,7 +123,7 @@ pipeline {
 					project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
 					testName: 'HealthCheck_carts_${BUILD_NUMBER}',
 					testDescription: 'HealthCheck_carts_${BUILD_NUMBER}',
-					commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=${env.APP_NAME}.dev.svc,port=80,basicPath=/carts/health",
+					commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=80,basicPath=/carts/health",
 					scenario: 'DynatraceSanityCheck', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
 					trendGraphs: [
 						[name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
@@ -148,7 +148,7 @@ pipeline {
 					project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
 					testName: 'DynatraceSanityCheck_carts_${BUILD_NUMBER}',
 					testDescription: 'DynatraceSanityCheck_carts_${BUILD_NUMBER}',
-					commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=${env.APP_NAME}.dev,port=80",
+					commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=80",
 					scenario: 'DYNATRACE_SANITYCHECK', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
 					trendGraphs: [
 						[name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
@@ -160,7 +160,7 @@ pipeline {
             
                echo "push ${OUTPUTSANITYCHECK}"
                //---add the push of the sanity check---
-               withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+               withCredentials([usernamePassword(credentialsId: 'git-credentials', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                    sh "git config --global user.email ${env.GITHUB_USER_EMAIL}"
                    sh "git config remote.origin.url https://github.com/${env.GITHUB_ORGANIZATION}/carts"
                    sh "git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*"
@@ -169,7 +169,7 @@ pipeline {
                    sh "git commit -m 'Update Sanity_Check_${BUILD_NUMBER} ${env.APP_NAME} version ${env.VERSION}'"
                  //  sh "git pull -r origin master"
                  //#TODO handle this exeption
-                  // sh "git push origin HEAD:master"
+                   sh "git push origin HEAD:master"
                
              }
 
@@ -181,18 +181,28 @@ pipeline {
               return env.BRANCH_NAME ==~ 'release/.*' || env.BRANCH_NAME ==~'master'
             }
           }
+          agent {
+          			dockerfile {
+          			  args '--user root -v /tmp:/tmp --network=lg_default'
+          			  dir 'neoload/controller'
+          			}
+                 }
 
           steps {
-               container('neoload') {
                  script {
+             				  neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
+             					project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
+             					testName: 'FuncCheck_carts__${BUILD_NUMBER}',
+             					testDescription: 'FuncCheck_carts__${BUILD_NUMBER}',
+             					commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=80",
+             					scenario: 'Cart_Load', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
+             					trendGraphs: [
+             						[name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
+             						'ErrorRate'
+             						]
+             				}
 
-                     status =sh(script:"/neoload/bin/NeoLoadCmd -project $WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp -testResultName FuncCheck_carts__${BUILD_NUMBER} -description FuncCheck_carts__${BUILD_NUMBER} -nlweb -L  Population_AddItemToCart=$WORKSPACE/infrastructure/infrastructure/neoload/lg/remote.txt -L Population_Dynatrace_Integration=$WORKSPACE/infrastructure/infrastructure/neoload/lg/local.txt -nlwebToken $NLAPIKEY -variables carts_host=${env.APP_NAME}.dev.svc,carts_port=80 -launch Cart_Load -noGUI", returnStatus: true)
-                      if (status != 0) {
-                        currentBuild.result = 'FAILED'
-                        error "Load Test on cart."
-                      }
-                 }
-             }
+
 
 
           }
@@ -215,23 +225,7 @@ pipeline {
         
       }
     }
-    stage('Deploy to staging') {
-      when {
-        beforeAgent true
-        expression {
-          return env.BRANCH_NAME ==~ 'release/.*'
-        }
-      }
-      steps {
-        build job: "k8s-deploy-staging",
-          parameters: [
-            string(name: 'APP_NAME', value: "${env.APP_NAME}"),
-            string(name: 'TAG_STAGING', value: "${env.TAG_STAGING}"),
-            string(name: 'VERSION', value: "${env.VERSION}")
-          ]
-      }
-    }
-  }
+
   post {
       always {
         stage('Stop Infrastructure') {
