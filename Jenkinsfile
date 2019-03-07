@@ -24,11 +24,11 @@ pipeline {
     }
     stages {
         stage('Maven build') {
+            agent { label 'master' }
             steps {
 
-                agent { label 'master' }
-                git(branch: 'master',
-                        url: 'https://github.com/neotysdevopsdemo/carts')
+
+
                 checkout scm
                 sh "mvn -B clean package -DdynatraceId=$DYNATRACEID -DneoLoadWebAPIKey=$NLAPIKEY -DdynatraceApiKey=$DYNATRACEAPIKEY -Dtags=${NL_DT_TAG} -DoutPutReferenceFile=$OUTPUTSANITYCHECK -DcustomActionPath=$DYNATRACEPLUGINPATH -DjsonAnomalieDetectionFile=$CARTS_ANOMALIEFILE"
                 // cette ligne est pour license ...mais il me semble que tu as license avec ton container  sh "chmod -R 777 $WORKSPACE/target/neoload/"
@@ -40,6 +40,7 @@ pipeline {
                     return env.BRANCH_NAME ==~ 'release/.*' || env.BRANCH_NAME ==~ 'master'
                 }
             }
+            agent { label 'master' }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
                     sh "./scripts/build.sh GROUP=${GROUP} COMMIT=${COMMIT}"
@@ -57,6 +58,7 @@ pipeline {
                     return env.BRANCH_NAME ==~ 'release/.*' || env.BRANCH_NAME ==~ 'master'
                 }
             }
+            agent { label 'master' }
             steps {
 
                 sh 'docker-compose -f docker-compose.yml up -d'
@@ -87,7 +89,7 @@ pipeline {
       }
     }*/
         stage('Start NeoLoad infrastructure') {
-
+            agent { label 'master' }
             steps {
                 sh 'docker-compose -f infrastructure/infrastructure/neoload/lg/docker-compose.yml up -d'
 
@@ -207,6 +209,7 @@ pipeline {
                     return env.BRANCH_NAME ==~ 'release/.*'
                 }
             }
+            agent { label 'master' }
             steps {
 
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
@@ -220,6 +223,7 @@ pipeline {
         }
     }
     post {
+        agent { label 'master' }
         always {
 
                 sh 'docker-compose -f infrastructure/infrastructure/neoload/lg/docker-compose.yml down'
