@@ -20,7 +20,7 @@ fi
 if [[ "$(uname)" == "Darwin" ]]; then
     DOCKER_CMD=docker
 else
-    DOCKER_CMD="sudo docker"
+    DOCKER_CMD="docker"
 fi
 CODE_DIR=$(cd $SCRIPT_DIR/..; pwd)
 echo $CODE_DIR
