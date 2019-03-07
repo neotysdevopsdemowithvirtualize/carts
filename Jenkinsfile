@@ -7,11 +7,11 @@ pipeline {
    }
   environment {
     APP_NAME = "carts"
-    TAG = "${env.DOCKER_REGISTRY_URL}:5000/neotysdevopdemo/${APP_NAME}"
-    TAG_DEV = "${env.TAG}:${env.VERSION}-${env.BUILD_NUMBER}"
+    TAG = "neotysdevopdemo/${APP_NAME}"
+    TAG_DEV = "${TAG}:${env.VERSION}-${env.BUILD_NUMBER}"
     NL_DT_TAG="app:${env.APP_NAME},environment:dev"
     CARTS_ANOMALIEFILE="$WORKSPACE/monspec/carts_anomalieDection.json"
-    TAG_STAGING = "${env.TAG}:${env.VERSION}"
+    TAG_STAGING = "${TAG}-stagging:${env.VERSION}"
     DYNATRACEID="${env.DT_ACCOUNTID}.live.dynatrace.com"
     DYNATRACEAPIKEY="${env.DT_API_TOKEN}"
     NLAPIKEY="${env.NL_WEB_API_KEY}"
@@ -218,9 +218,9 @@ pipeline {
          
           withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
             sh "docker login --username=${USER} --password=${TOKEN}"
-			sh "GROUP=${GROUP} COMMIT=${env.TAG_STAGING} ./scripts/push.sh
-            sh "docker tag ${env.TAG_DEV} ${env.TAG_STAGING}"
-            sh "docker push ${env.TAG_STAGING}"
+			sh "GROUP=${GROUP} COMMIT=${TAG_STAGING} ./scripts/push.sh"
+            sh "docker tag $TAG_DEV} ${TAG_STAGING}"
+            sh "docker push ${TAG_STAGING}"
           }
         
       }
