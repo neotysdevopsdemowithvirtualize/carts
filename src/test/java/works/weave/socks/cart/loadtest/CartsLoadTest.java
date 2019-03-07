@@ -28,7 +28,7 @@ public class CartsLoadTest extends NeoLoadTest {
     public void execute() {
 
         createSimpleConstantLoadScenario("Cart_Load","AddItemToCart",600,49,10);
-        createSimpleConstantIterationScenario("DynatraceSanityCheck","BasicCheckTesting",15,1,0);
+        createSimpleConstantIterationScenario("DynatraceSanityCheck","BasicCheckTesting",5,1,0);
         createSanityCheckScenario();
     }
 }
