@@ -7,7 +7,7 @@ pipeline {
     }
     environment {
         APP_NAME = "carts"
-        TAG = "neotysdevopdemo/${APP_NAME}"
+        TAG = "neotysdevopsdemo/${APP_NAME}"
         TAG_DEV = "${TAG}:${env.VERSION}-${env.BUILD_NUMBER}"
         NL_DT_TAG = "app:${env.APP_NAME},environment:dev"
         CARTS_ANOMALIEFILE = "$WORKSPACE/monspec/carts_anomalieDection.json"
@@ -26,7 +26,7 @@ pipeline {
         stage('Checkout') {
             agent { label 'master' }
             steps {
-                git  url:'https://github.com/neotysdevopdemo/carts.git',
+                git  url:'https://github.com/neotysdevopsdemo/carts.git',
                         branch :'master'
             }
         }
