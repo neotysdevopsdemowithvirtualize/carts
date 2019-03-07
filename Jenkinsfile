@@ -223,7 +223,7 @@ pipeline {
         }
     }
     post {
-        agent { label 'master' }
+
         always {
 
                 sh 'docker-compose -f infrastructure/infrastructure/neoload/lg/docker-compose.yml down'
