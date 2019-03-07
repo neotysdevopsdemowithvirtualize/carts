@@ -18,8 +18,8 @@ pipeline {
         OUTPUTSANITYCHECK = "$WORKSPACE/infrastructure/sanitycheck.json"
         DYNATRACEPLUGINPATH = "$WORKSPACE/lib/DynatraceIntegration-3.0.1-SNAPSHOT.jar"
         GITORIGIN = "neotyslab"
-        GROUP = neotysdevopdemo
-        COMMIT = DEV - $ { env.BUILD_NUMBER }
+        GROUP = "neotysdevopdemo"
+        COMMIT = "DEV - ${ env.BUILD_NUMBER}"
 
     }
     stages {
