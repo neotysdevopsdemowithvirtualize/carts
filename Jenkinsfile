@@ -26,13 +26,12 @@ pipeline {
     stage('Maven build') {
       steps {
         
-         agent { label 'master'} {
+         agent { label 'master'}
 		  git(branch:'master',
               url:'https://github.com/neotysdevopsdemo/carts')
          checkout scm
           sh "mvn -B clean package -DdynatraceId=$DYNATRACEID -DneoLoadWebAPIKey=$NLAPIKEY -DdynatraceApiKey=$DYNATRACEAPIKEY -Dtags=${NL_DT_TAG} -DoutPutReferenceFile=$OUTPUTSANITYCHECK -DcustomActionPath=$DYNATRACEPLUGINPATH -DjsonAnomalieDetectionFile=$CARTS_ANOMALIEFILE"
         // cette ligne est pour license ...mais il me semble que tu as license avec ton container  sh "chmod -R 777 $WORKSPACE/target/neoload/"
-        }
       }
     }
     stage('Docker build') {
@@ -42,11 +41,10 @@ pipeline {
         }
       }
       steps {
-      withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
-
-         sh "./scripts/build.sh GROUP=${GROUP} COMMIT=${COMMIT}"
-         sh "docker login --username=${USER} --password=${TOKEN}"
-         sh "docker push ${TAG_DEV}"
+         withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
+              sh "./scripts/build.sh GROUP=${GROUP} COMMIT=${COMMIT}"
+              sh "docker login --username=${USER} --password=${TOKEN}"
+              sh "docker push ${TAG_DEV}"
 		 }
          sh "sed -i 's/TAG_TO_REPLACE/${TAG_DEV}/'  docker-compose.yml"
       }
@@ -92,10 +90,8 @@ pipeline {
 
             steps {
                      sh 'docker-compose -f infrastructure/infrastructure/neoload/lg/docker-compose.yml up -d'
-            stash includes: 'neoload/lg/lg.yaml', name: 'LG'
-            stash includes: 'neoload/test/microservices.yaml', name: 'microservices'
-            stash includes: 'neoload/test/data/tokens.csv', name: 'tokens'
-                    }
+
+             }
 
     }
 	stage('Join Load Generators to Application') {
@@ -115,7 +111,7 @@ pipeline {
 
        steps {
 
-         container('neoload') {
+
              echo "Waiting for the service to start..."
              sleep 100
              script {
@@ -132,7 +128,7 @@ pipeline {
 			}
 			 
 			
-         }
+
       }
     }
     stage('Sanity Check') {
@@ -171,7 +167,7 @@ pipeline {
                  //#TODO handle this exeption
                    sh "git push origin HEAD:master"
                
-             }
+              }
 
           }
     }
@@ -239,9 +235,8 @@ pipeline {
         stage('Stop application'){
           agent { label 'master'}
           steps {
-            git(branch:'master',
-              url:'https://github.com/microservices-demo/microservices-demo')
-            sh 'docker-compose -f deploy/docker-compose/docker-compose.yml down'
+
+            sh 'docker-compose -f docker-compose.yml down'
           }
         }
       }
