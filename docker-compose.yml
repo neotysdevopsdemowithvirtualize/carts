@@ -2,7 +2,7 @@ version: '2'
 
 services:
   carts:
-    image: weaveworksdemos/carts
+    image: neotysdevopsdemo/carts:TAG_TO_REPLACE
     hostname: carts
     restart: always
     cap_drop:
@@ -14,13 +14,15 @@ services:
       - /tmp:rw,noexec,nosuid
     environment:
       - reschedule=on-node-failure
-      - ZIPKIN_HOST=zipkin
-      - ZIPKIN_ENABLED=true
+      - ZIPKIN_ENABLED=false
+	  - DT_CUSTOM_PROP=app=carts,environment=dev
+	  - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC
+    - DEBUG
     ports:
       - "8081:80"
-  zipkin:
-    image: openzipkin/zipkin 
-    hostname: zipkin
+  carts-db:
+    image: mongo:3.4
+    hostname: carts-db
     restart: always
     cap_drop:
       - all
@@ -29,9 +31,7 @@ services:
       - SETGID
       - SETUID
     read_only: true
+	environment:
+	  - DT_CUSTOM_PROP=app=carts-db,environment=dev
     tmpfs:
       - /tmp:rw,noexec,nosuid
-    environment:
-      - reschedule=on-node-failure
-    ports:
-      - "9411:9411"
