@@ -122,7 +122,7 @@ pipeline {
                             project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
                             testName: 'HealthCheck_carts_${VERSION}_${BUILD_NUMBER}',
                             testDescription: 'HealthCheck_carts_${VERSION}_${BUILD_NUMBER}',
-                            commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=8082,basicPath=/carts/health",
+                            commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=8082,basicPath=/health",
                             scenario: 'DynatraceSanityCheck', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                             trendGraphs: [
                                     [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
