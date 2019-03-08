@@ -116,7 +116,7 @@ pipeline {
 
 
                 echo "Waiting for the service to start..."
-                sleep 200
+                sleep 250
                 script {
                     neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
                             project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
