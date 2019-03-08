@@ -51,7 +51,7 @@ pipeline {
                     sh "cp ./target/*.jar ./docker/carts"
                     sh "docker build --build-arg BUILD_VERSION=${VERSION} --build-arg COMMIT=$COMMIT -t ${TAG_DEV} $WORKSPACE/docker/carts/"
                     sh "docker login --username=${USER} --password=${TOKEN}"
-                    sh "docker push ${TAG_DEV}"
+                 //   sh "docker push ${TAG_DEV}"
                 }
                 sh "sed -i 's/TAG_TO_REPLACE/DEV-${VERSION}/'  docker-compose.yml"
             }
