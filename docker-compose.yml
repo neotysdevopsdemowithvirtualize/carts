@@ -30,7 +30,7 @@ services:
       - SETGID
       - SETUID
     read_only: true
-	environment:
+    environment:
       - DT_CUSTOM_PROP=app=carts-db,environment=dev
     tmpfs:
       - /tmp:rw,noexec,nosuid
