@@ -15,7 +15,7 @@ LABEL org.label-schema.vendor="Weaveworks" \
   org.label-schema.version="${BUILD_VERSION}" \
   org.label-schema.name="Socks Shop: Cart" \
   org.label-schema.description="REST API for Cart service" \
-  org.label-schema.url="https://github.com/neotysdevopsdemo-demo/carts" \
+  org.label-schema.url="https://github.com/neotysdevopsdemo/carts" \
   org.label-schema.vcs-url="github.com:neotysdevopsdemo/carts.git" \
   org.label-schema.vcs-ref="${COMMIT}"
 
