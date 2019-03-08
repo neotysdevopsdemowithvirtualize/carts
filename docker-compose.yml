@@ -18,7 +18,7 @@ services:
       - DT_CUSTOM_PROP=app=carts,environment=dev
       - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC
     ports:
-      - "8081:80"
+      - "8082:80"
   carts-db:
     image: mongo:3.4
     hostname: carts-db
