@@ -34,6 +34,3 @@ services:
       - DT_CUSTOM_PROP=app=carts-db,environment=dev
     tmpfs:
       - /tmp:rw,noexec,nosuid
-networks:
-  default:
-    driver: custom-driver-1

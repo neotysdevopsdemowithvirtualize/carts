@@ -100,13 +100,13 @@ pipeline {
         }
         stage('Join Load Generators to Application') {
             steps {
-                sh 'docker network connect docker-compose_default docker-lg1'
+                sh 'docker network connect carts_master_default docker-lg1'
             }
         }
         stage('Run health check in dev') {
             agent {
                 dockerfile {
-                    args '--user root -v /tmp:/tmp --network=lg_default'
+                    args '--user root -v /tmp:/tmp --network=carts_master_default'
                     dir 'neoload/controller'
                 }
             }
@@ -136,7 +136,7 @@ pipeline {
         stage('Sanity Check') {
             agent {
                 dockerfile {
-                    args '--user root -v /tmp:/tmp --network=lg_default'
+                    args '--user root -v /tmp:/tmp --network=carts_master_default'
                     dir 'neoload/controller'
                 }
             }
@@ -181,7 +181,7 @@ pipeline {
             }
             agent {
                 dockerfile {
-                    args '--user root -v /tmp:/tmp --network=lg_default'
+                    args '--user root -v /tmp:/tmp --network=carts_master_default'
                     dir 'neoload/controller'
                 }
             }
