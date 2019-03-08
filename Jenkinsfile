@@ -33,7 +33,6 @@ pipeline {
             }
         }
         stage('Maven build') {
-            agent { label 'master' }
             steps {
                 sh "mvn -B clean package -DdynatraceId=$DYNATRACEID -DneoLoadWebAPIKey=$NLAPIKEY -DdynatraceApiKey=$DYNATRACEAPIKEY -Dtags=${NL_DT_TAG} -DoutPutReferenceFile=$OUTPUTSANITYCHECK -DcustomActionPath=$DYNATRACEPLUGINPATH -DjsonAnomalieDetectionFile=$CARTS_ANOMALIEFILE"
                 // cette ligne est pour license ...mais il me semble que tu as license avec ton container  sh "chmod -R 777 $WORKSPACE/target/neoload/"
@@ -45,7 +44,6 @@ pipeline {
                     return env.BRANCH_NAME ==~ 'release/.*' || env.BRANCH_NAME ==~ 'master'
                 }
             }
-            agent { label 'master' }
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
                     sh "cp ./target/*.jar ./docker/carts"
@@ -64,7 +62,6 @@ pipeline {
                     return env.BRANCH_NAME ==~ 'release/.*' || env.BRANCH_NAME ==~ 'master'
                 }
             }
-            agent { label 'master' }
             steps {
                 sh "sed -i 's,TAG_TO_REPLACE,${TAG_DEV},' $WORKSPACE/docker-compose.yml"
                 sh 'docker-compose -f $WORKSPACE/docker-compose.yml up -d'
@@ -95,7 +92,6 @@ pipeline {
       }
     }*/
         stage('Start NeoLoad infrastructure') {
-            agent { label 'master' }
             steps {
                 sh 'docker-compose -f infrastructure/infrastructure/neoload/lg/docker-compose.yml up -d'
 
@@ -103,7 +99,6 @@ pipeline {
 
         }
         stage('Join Load Generators to Application') {
-            agent { label 'master' }
             steps {
                 sh 'docker network connect docker-compose_default docker-lg1'
             }
@@ -215,7 +210,6 @@ pipeline {
                     return env.BRANCH_NAME ==~ 'release/.*'
                 }
             }
-            agent { label 'master' }
             steps {
 
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
