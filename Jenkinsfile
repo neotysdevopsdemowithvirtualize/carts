@@ -53,7 +53,7 @@ pipeline {
                     sh "docker login --username=${USER} --password=${TOKEN}"
                  //   sh "docker push ${TAG_DEV}"
                 }
-                sh "sed -i 's/TAG_TO_REPLACE/${TAG_DEV}/'  docker-compose.yml"
+                sh "sed -i 's,TAG_TO_REPLACE,${TAG_DEV},'  docker-compose.yml"
             }
         }
 
