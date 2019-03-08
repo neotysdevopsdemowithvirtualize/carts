@@ -1,13 +1,10 @@
-FROM neotys/neoload-controller:6.7.0
+FROM neotys/neoload-controller:6.8.1
 
 ARG user=neoload
 ENV HOME /home/${user}
-ENV license
 
 ARG JENKINS_VERSION=3.26
 ARG JENKINS_WORKDIR=/home/${user}/agent
-
-COPY $license /home/${user}/.neotys/neoload/licence.lic
 
 USER root
 RUN apk add --update --no-cache curl bash git openssh-client openssl procps \
@@ -23,5 +20,9 @@ RUN mkdir /home/${user}/.jenkins && mkdir -p ${AGENT_WORKDIR}
 VOLUME /home/${user}/.jenkins
 VOLUME ${AGENT_WORKDIR}
 WORKDIR /home/${user}
+
+ENV CONTROLLER_XMX=-Xmx512m
+
+EXPOSE 7100
 
 ENTRYPOINT []
