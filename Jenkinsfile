@@ -28,7 +28,7 @@ pipeline {
         stage('Checkout') {
             agent { label 'master' }
             steps {
-                git  url:'https://github.com/$GROUP/carts.git',
+                git  url:"https://github.com/${GROUP}/carts.git",
                         branch :'master'
             }
         }
