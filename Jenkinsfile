@@ -6,20 +6,20 @@ pipeline {
         jdk 'jdk8'
     }
     environment {
+        VERSION="0.1"
         APP_NAME = "carts"
         TAG = "neotysdevopsdemo/${APP_NAME}"
-        TAG_DEV = "${TAG}:${env.VERSION}-${env.BUILD_NUMBER}"
+        TAG_DEV = "${TAG}:DEV-${VERSION}"
         NL_DT_TAG = "app:${env.APP_NAME},environment:dev"
         CARTS_ANOMALIEFILE = "$WORKSPACE/monspec/carts_anomalieDection.json"
-        TAG_STAGING = "${TAG}-stagging:${env.VERSION}"
+        TAG_STAGING = "${TAG}-stagging:${VERSION}"
         DYNATRACEID = "${env.DT_ACCOUNTID}.live.dynatrace.com"
         DYNATRACEAPIKEY = "${env.DT_API_TOKEN}"
         NLAPIKEY = "${env.NL_WEB_API_KEY}"
         OUTPUTSANITYCHECK = "$WORKSPACE/infrastructure/sanitycheck.json"
         DYNATRACEPLUGINPATH = "$WORKSPACE/lib/DynatraceIntegration-3.0.1-SNAPSHOT.jar"
-        GITORIGIN = "neotyslab"
         GROUP = "neotysdevopsdemo"
-        COMMIT = "DEV - ${ env.BUILD_NUMBER}"
+        COMMIT = "DEV-${VERSION}"
 
 
 
@@ -28,7 +28,7 @@ pipeline {
         stage('Checkout') {
             agent { label 'master' }
             steps {
-                git  url:'https://github.com/neotysdevopsdemo/carts.git',
+                git  url:'https://github.com/${GROUP}/carts.git',
                         branch :'master'
             }
         }
@@ -49,11 +49,11 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
                     sh "cp ./target/*.jar ./docker/carts"
-                    sh "docker build --build-arg BUILD_VERSION=${env.VERSION} E --build-arg COMMIT=$COMMIT -t ${GROUP}/carts:${TAG_DEV}"
+                    sh "docker build --build-arg BUILD_NUMBER=${env.BUILD_NUMBER} --build-arg BUILD_VERSION=${VERSION} --build-arg COMMIT=$COMMIT -t ${TAG_DEV}"
                     sh "docker login --username=${USER} --password=${TOKEN}"
                     sh "docker push ${TAG_DEV}"
                 }
-                sh "sed -i 's/TAG_TO_REPLACE/${TAG_DEV}/'  docker-compose.yml"
+                sh "sed -i 's/TAG_TO_REPLACE/DEV-${VERSION}/'  docker-compose.yml"
             }
         }
 
@@ -125,8 +125,8 @@ pipeline {
                 script {
                     neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
                             project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
-                            testName: 'HealthCheck_carts_${BUILD_NUMBER}',
-                            testDescription: 'HealthCheck_carts_${BUILD_NUMBER}',
+                            testName: 'HealthCheck_carts_${VERSION}_${BUILD_NUMBER}',
+                            testDescription: 'HealthCheck_carts_${VERSION}_${BUILD_NUMBER}',
                             commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=80,basicPath=/carts/health",
                             scenario: 'DynatraceSanityCheck', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                             trendGraphs: [
@@ -149,8 +149,8 @@ pipeline {
                 script {
                     neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
                             project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
-                            testName: 'DynatraceSanityCheck_carts_${BUILD_NUMBER}',
-                            testDescription: 'DynatraceSanityCheck_carts_${BUILD_NUMBER}',
+                            testName: 'DynatraceSanityCheck_carts_${VERSION}_${BUILD_NUMBER}',
+                            testDescription: 'DynatraceSanityCheck_carts_${VERSION}_${BUILD_NUMBER}',
                             commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=80",
                             scenario: 'DYNATRACE_SANITYCHECK', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                             trendGraphs: [
@@ -169,7 +169,7 @@ pipeline {
                     sh "git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*"
                     sh "git config remote.origin.url https://github.com/${env.GITHUB_ORGANIZATION}/carts"
                     sh "git add ${OUTPUTSANITYCHECK}"
-                    sh "git commit -m 'Update Sanity_Check_${BUILD_NUMBER} ${env.APP_NAME} version ${env.VERSION}'"
+                    sh "git commit -m 'Update Sanity_Check_${BUILD_NUMBER} ${env.APP_NAME} '"
                     //  sh "git pull -r origin master"
                     //#TODO handle this exeption
                     sh "git push origin HEAD:master"
@@ -195,8 +195,8 @@ pipeline {
                 script {
                     neoloadRun executable: '/home/neoload/neoload/bin/NeoLoadCmd',
                             project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
-                            testName: 'FuncCheck_carts__${BUILD_NUMBER}',
-                            testDescription: 'FuncCheck_carts__${BUILD_NUMBER}',
+                            testName: 'FuncCheck_carts__${VERSION}_${BUILD_NUMBER}',
+                            testDescription: 'FuncCheck_carts__${VERSION}_${BUILD_NUMBER}',
                             commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=80",
                             scenario: 'Cart_Load', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                             trendGraphs: [
@@ -222,7 +222,7 @@ pipeline {
                     sh "docker login --username=${USER} --password=${TOKEN}"
 
                     sh "GROUP=${GROUP} COMMIT=${TAG_STAGING} ./scripts/push.sh"
-                    sh "docker tag $TAG_DEV} ${TAG_STAGING}"
+                    sh "docker tag ${TAG_DEV} ${TAG_STAGING}"
                     sh "docker push ${TAG_STAGING}"
                 }
 
