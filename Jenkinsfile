@@ -107,7 +107,7 @@ pipeline {
             agent {
                 dockerfile {
                     args '--user root -v /tmp:/tmp --network=carts_master_default'
-                    dir 'neoload/controller'
+                    dir '$WORKSPACE/infrastructure/infrastructure/neoload/controller'
                 }
             }
 
@@ -137,7 +137,7 @@ pipeline {
             agent {
                 dockerfile {
                     args '--user root -v /tmp:/tmp --network=carts_master_default'
-                    dir 'neoload/controller'
+                    dir '$WORKSPACE/infrastructure/infrastructure/neoload/controller'
                 }
             }
             steps {
@@ -182,7 +182,7 @@ pipeline {
             agent {
                 dockerfile {
                     args '--user root -v /tmp:/tmp --network=carts_master_default'
-                    dir 'neoload/controller'
+                    dir '$WORKSPACE/infrastructure/infrastructure/neoload/controller'
                 }
             }
 
@@ -227,8 +227,8 @@ pipeline {
 
         always {
 
-                sh 'docker-compose -f infrastructure/infrastructure/neoload/lg/docker-compose.yml down'
-                sh 'docker-compose -f docker-compose.yml down'
+                sh 'docker-compose -f $WORKSPACE/infrastructure/infrastructure/neoload/lg/docker-compose.yml down'
+                sh 'docker-compose -f $WORKSPACE/docker-compose.yml down'
 
         }
 
