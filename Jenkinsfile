@@ -53,7 +53,7 @@ pipeline {
                     sh "docker login --username=${USER} --password=${TOKEN}"
                  //   sh "docker push ${TAG_DEV}"
                 }
-                sh "sed -i 's,TAG_TO_REPLACE,${TAG_DEV},' $WORKSPACE/docker-compose.yml"
+
             }
         }
 
@@ -66,8 +66,8 @@ pipeline {
             }
             agent { label 'master' }
             steps {
-
-                sh 'docker-compose -f docker-compose.yml up -d'
+                sh "sed -i 's,TAG_TO_REPLACE,${TAG_DEV},' $WORKSPACE/docker-compose.yml"
+                sh 'docker-compose -f $WORKSPACE/docker-compose.yml up -d'
 
             }
         }
