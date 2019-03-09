@@ -167,7 +167,7 @@ pipeline {
                     sh "git commit -m 'Update Sanity_Check_${BUILD_NUMBER} ${env.APP_NAME} '"
                     //  sh "git pull -r origin master"
                     //#TODO handle this exeption
-                    sh "git push origin HEAD:master"
+                 //   sh "git push origin HEAD:master"
 
                 }
 
