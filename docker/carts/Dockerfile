@@ -11,7 +11,7 @@ USER ${SERVICE_USER}
 ARG BUILD_VERSION
 ARG COMMIT
 
-LABEL org.label-schema.vendor="Weaveworks" \
+LABEL org.label-schema.vendor="Neotys" \
   org.label-schema.version="${BUILD_VERSION}" \
   org.label-schema.name="Socks Shop: Cart" \
   org.label-schema.description="REST API for Cart service" \
