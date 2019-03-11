@@ -122,7 +122,7 @@ pipeline {
                             project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
                             testName: 'HealthCheck_carts_${VERSION}_${BUILD_NUMBER}',
                             testDescription: 'HealthCheck_carts_${VERSION}_${BUILD_NUMBER}',
-                            commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=8082,basicPath=/health",
+                            commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=80,basicPath=/health",
                             scenario: 'DynatraceSanityCheck', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                             trendGraphs: [
                                     [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
@@ -146,7 +146,7 @@ pipeline {
                             project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
                             testName: 'DynatraceSanityCheck_carts_${VERSION}_${BUILD_NUMBER}',
                             testDescription: 'DynatraceSanityCheck_carts_${VERSION}_${BUILD_NUMBER}',
-                            commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=8082",
+                            commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=80",
                             scenario: 'DYNATRACE_SANITYCHECK', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                             trendGraphs: [
                                     [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
@@ -163,8 +163,8 @@ pipeline {
                     sh "git config remote.origin.url https://github.com/${env.GITHUB_ORGANIZATION}/carts"
                     sh "git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/*"
                     sh "git config remote.origin.url https://github.com/${env.GITHUB_ORGANIZATION}/carts"
-                    sh "git add ${OUTPUTSANITYCHECK}"
-                    sh "git commit -m 'Update Sanity_Check_${BUILD_NUMBER} ${env.APP_NAME} '"
+                  //  sh "git add ${OUTPUTSANITYCHECK}"
+                   // sh "git commit -m 'Update Sanity_Check_${BUILD_NUMBER} ${env.APP_NAME} '"
                     //  sh "git pull -r origin master"
                     //#TODO handle this exeption
                  //   sh "git push origin HEAD:master"
@@ -192,7 +192,7 @@ pipeline {
                             project: "$WORKSPACE/target/neoload/Carts_NeoLoad/Carts_NeoLoad.nlp",
                             testName: 'FuncCheck_carts__${VERSION}_${BUILD_NUMBER}',
                             testDescription: 'FuncCheck_carts__${VERSION}_${BUILD_NUMBER}',
-                            commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=8082",
+                            commandLineOption: "-nlweb -loadGenerators $WORKSPACE/infrastructure/infrastructure/neoload/lg/lg.yaml -nlwebToken $NLAPIKEY -variables host=carts,port=80",
                             scenario: 'Cart_Load', sharedLicense: [server: 'NeoLoad Demo License', duration: 2, vuCount: 200],
                             trendGraphs: [
                                     [name: 'Limit test Catalogue API Response time', curve: ['CatalogueList>Actions>Get Catalogue List'], statistic: 'average'],
