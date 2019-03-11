@@ -1,1 +1,1 @@
-nl-lg.cicd-neotys.svc
+docker-lg1
