@@ -3,10 +3,6 @@ FROM java:openjdk-8-alpine
 WORKDIR /usr/src/app
 COPY *.jar ./app.jar
 
-RUN	chown -R ${SERVICE_USER}:${SERVICE_GROUP} ./app.jar
-
-USER ${SERVICE_USER}
-
 ARG BUILD_VERSION
 ARG COMMIT
 
