@@ -15,7 +15,7 @@ services:
     environment:
       - reschedule=on-node-failure
       - ZIPKIN_ENABLED=false
-      - DT_CUSTOM_PROP=app=carts,environment=dev
+      - DT_CUSTOM_PROP=app=carts environment=dev
       - JAVA_OPTS=-Xms64m -Xmx128m -XX:+UseG1GC
     ports:
       - "8082:80"
@@ -31,6 +31,6 @@ services:
       - SETUID
     read_only: true
     environment:
-      - DT_CUSTOM_PROP=app=carts-db,environment=dev
+      - DT_CUSTOM_PROP=app=carts-db environment=dev
     tmpfs:
       - /tmp:rw,noexec,nosuid

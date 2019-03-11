@@ -1,4 +1,4 @@
-FROM weaveworksdemos/msd-java:jre-latest
+FROM java:openjdk-8-alpine
 
 WORKDIR /usr/src/app
 COPY *.jar ./app.jar
@@ -6,7 +6,6 @@ COPY *.jar ./app.jar
 RUN	chown -R ${SERVICE_USER}:${SERVICE_GROUP} ./app.jar
 
 USER ${SERVICE_USER}
-
 
 ARG BUILD_VERSION
 ARG COMMIT
@@ -19,4 +18,9 @@ LABEL org.label-schema.vendor="Neotys" \
   org.label-schema.vcs-url="github.com:neotysdevopsdemo/carts.git" \
   org.label-schema.vcs-ref="${COMMIT}"
 
-ENTRYPOINT ["/usr/local/bin/java.sh","-jar","./app.jar", "--port=80"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/urandom","-jar","./app.jar", "--port=80"]
+
+
+
+
+
