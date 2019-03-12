@@ -21,8 +21,6 @@ pipeline {
         GROUP = "neotysdevopsdemo"
         COMMIT = "DEV-${VERSION}"
 
-
-
     }
     stages {
         stage('Checkout') {
@@ -49,7 +47,7 @@ pipeline {
                     sh "cp ./target/*.jar ./docker/carts"
                     sh "docker build --build-arg BUILD_VERSION=${VERSION} --build-arg COMMIT=$COMMIT -t ${TAG_DEV} $WORKSPACE/docker/carts/"
                     sh "docker login --username=${USER} --password=${TOKEN}"
-                 //   sh "docker push ${TAG_DEV}"
+                    sh "docker push ${TAG_DEV}"
                 }
 
             }
@@ -108,6 +106,7 @@ pipeline {
                 dockerfile {
                     args '--user root -v /tmp:/tmp --network=carts_master_default'
                     dir 'infrastructure/infrastructure/neoload/controller'
+                    reuseNode true
                 }
             }
 
@@ -138,6 +137,7 @@ pipeline {
                 dockerfile {
                     args '--user root -v /tmp:/tmp --network=carts_master_default'
                     dir 'infrastructure/infrastructure/neoload/controller'
+                    reuseNode true
                 }
             }
             steps {
@@ -182,6 +182,7 @@ pipeline {
                 dockerfile {
                     args '--user root -v /tmp:/tmp --network=carts_master_default'
                     dir 'infrastructure/infrastructure/neoload/controller'
+                    reuseNode true
                 }
             }
 
@@ -223,7 +224,7 @@ pipeline {
     post {
 
         always {
-
+                cleanWs()
                 sh 'docker-compose -f $WORKSPACE/infrastructure/infrastructure/neoload/lg/doker-compose.yml down'
                 sh 'docker-compose -f $WORKSPACE/docker-compose.yml down'
 
