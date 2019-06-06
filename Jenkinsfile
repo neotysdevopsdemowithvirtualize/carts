@@ -205,11 +205,7 @@ pipeline {
         }
 
         stage('Mark artifact for staging namespace') {
-            when {
-                expression {
-                    return env.BRANCH_NAME ==~ 'release/.*'
-                }
-            }
+
             steps {
 
                 withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'TOKEN', usernameVariable: 'USER')]) {
