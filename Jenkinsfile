@@ -17,7 +17,7 @@ pipeline {
         DYNATRACEAPIKEY = "${env.DT_API_TOKEN}"
         NLAPIKEY = "${env.NL_WEB_API_KEY}"
         OUTPUTSANITYCHECK = "$WORKSPACE/infrastructure/sanitycheck.json"
-        DYNATRACEPLUGINPATH = "$WORKSPACE/lib/DynatraceIntegration-4.0.3-BETA3.jar"
+        DYNATRACEPLUGINPATH = "$WORKSPACE/lib/DynatraceIntegration-4.0.4-BETA.jar"
         GROUP = "neotysdevopsdemo"
         COMMIT = "DEV-${VERSION}"
 
