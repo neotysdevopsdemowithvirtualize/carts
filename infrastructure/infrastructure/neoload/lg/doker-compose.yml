@@ -6,3 +6,7 @@ services:
     image: neotys/neoload-loadgenerator:6.8.1
     environment:
     - LOADGENERATOR_XMX=-Xmx512m
+networks:
+  default:
+    external:
+      name: TO_REPLACE
