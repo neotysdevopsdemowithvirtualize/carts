@@ -228,7 +228,7 @@ pipeline {
 
                 sh 'docker-compose -f $WORKSPACE/infrastructure/infrastructure/neoload/lg/doker-compose.yml down'
                 sh 'docker-compose -f $WORKSPACE/docker-compose.yml down'
-                sh 'docker network rm ${APP_NAME}_${VERSION} || true"'
+                sh 'docker network rm ${APP_NAME}_${VERSION} || true'
                   cleanWs()
                 sh 'docker volume prune'
         }
